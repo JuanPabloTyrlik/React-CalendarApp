@@ -5,7 +5,11 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiModalClose } from '../../actions/ui';
-import { eventAddNew } from '../../actions/events';
+import {
+    eventAddNew,
+    eventClearActive,
+    eventUpdated,
+} from '../../actions/events';
 
 const customStyles = {
     content: {
@@ -44,6 +48,10 @@ export const CalendarModal = () => {
 
     const closeModal = () => {
         dispatch(uiModalClose());
+        setTimeout(() => {
+            // Waits for animation to hide the modal
+            dispatch(eventClearActive());
+        }, 200);
     };
 
     const handleStartDate = (e) => {
@@ -105,17 +113,26 @@ export const CalendarModal = () => {
             );
         }
         // TODO: Save to DB
-        dispatch(
-            eventAddNew({
-                id: new Date().getTime(),
-                ...formValues,
-                user: {
-                    name: 'Juan Pablo',
-                },
-            })
-        );
+        if (activeEvent) {
+            dispatch(
+                eventUpdated({
+                    id: activeEvent.id,
+                    ...formValues,
+                    user: activeEvent.user,
+                })
+            );
+        } else {
+            dispatch(
+                eventAddNew({
+                    id: new Date().getTime(),
+                    ...formValues,
+                    user: {
+                        name: 'Juan Pablo',
+                    },
+                })
+            );
+        }
         closeModal();
-        setFormValues(initEvent);
     };
 
     useEffect(() => {
@@ -137,7 +154,7 @@ export const CalendarModal = () => {
                 overlayClassName="modal-fondo"
                 closeTimeoutMS={200}
             >
-                <h1> Nuevo evento </h1>
+                <h1> {activeEvent ? 'Editar evento' : 'Nuevo evento'} </h1>
                 <hr />
                 <form className="container" onSubmit={handleSubmit}>
                     <div className="form-group">
