@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiModalClose } from '../../actions/ui';
+import { eventAddNew } from '../../actions/events';
 
 const customStyles = {
     content: {
@@ -19,23 +20,27 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
+const start = moment().minutes(0).seconds(0).toDate();
+const end = moment(start).add(1, 'hour').toDate();
+
+const initEvent = {
+    title: '',
+    notes: '',
+    start,
+    end,
+};
+
 export const CalendarModal = () => {
     const dispatch = useDispatch();
-    const { modalOpen } = useSelector((state) => state.ui);
+    const {
+        ui: { modalOpen },
+        calendar: { activeEvent },
+    } = useSelector((state) => state);
 
-    const [startDate, setStartDate] = useState(
-        moment().minutes(0).seconds(0).toDate()
-    );
-    const [endDate, setEndDate] = useState(
-        moment(startDate).add(1, 'hour').toDate()
-    );
+    const [startDate, setStartDate] = useState(start);
+    const [endDate, setEndDate] = useState(end);
 
-    const [formValues, setFormValues] = useState({
-        title: 'Evento',
-        notes: '',
-        start: startDate,
-        end: endDate,
-    });
+    const [formValues, setFormValues] = useState(initEvent);
 
     const closeModal = () => {
         dispatch(uiModalClose());
@@ -100,7 +105,27 @@ export const CalendarModal = () => {
             );
         }
         // TODO: Save to DB
+        dispatch(
+            eventAddNew({
+                id: new Date().getTime(),
+                ...formValues,
+                user: {
+                    name: 'Juan Pablo',
+                },
+            })
+        );
+        closeModal();
+        setFormValues(initEvent);
     };
+
+    useEffect(() => {
+        setFormValues({
+            title: activeEvent?.title || '',
+            notes: activeEvent?.notes || '',
+            start: activeEvent?.start || start,
+            end: activeEvent?.end || end,
+        });
+    }, [activeEvent]);
 
     return (
         <div>
@@ -150,7 +175,7 @@ export const CalendarModal = () => {
                         <input
                             type="text"
                             className={`form-control ${
-                                formValues.title ? 'is-valid' : 'is-invalid'
+                                formValues.title && 'is-valid'
                             }`}
                             placeholder="Título del evento"
                             name="title"

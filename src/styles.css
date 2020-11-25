@@ -69,3 +69,12 @@ body {
 .react-datetime-picker__inputGroup__leadingZero {
     color: black;
 }
+
+.fab {
+    border-radius: 50%;
+    bottom: 2rem;
+    font-size: 2.5rem;
+    padding: 1rem;
+    position: fixed;
+    right: 2rem;
+}
