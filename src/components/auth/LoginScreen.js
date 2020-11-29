@@ -19,15 +19,15 @@ export const LoginScreen = () => {
     });
 
     const [loginForm, handleLoginChange] = useForm({
-        Lemail: 'juan.pablo@gmail.com',
-        Lpassword: 'Ab1-bccH',
+        Lemail: '',
+        Lpassword: '',
     });
 
     const [registerForm, handleRegisterChange] = useForm({
-        Rname: 'Juan Pablo',
-        Remail: 'juan.pablo@gmail.com',
-        Rpassword: 'Ab1-bccH',
-        Rpassword2: 'Ab1-bccH',
+        Rname: '',
+        Remail: '',
+        Rpassword: '',
+        Rpassword2: '',
     });
 
     const { Lemail, Lpassword } = loginForm;

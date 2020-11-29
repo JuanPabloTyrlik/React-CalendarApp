@@ -58,9 +58,13 @@ export const startChecking = () => async (dispatch) => {
             })
         );
     } else {
-        Swal.fire('Error', body.message, 'error');
         dispatch(checkingFinish());
     }
+};
+
+export const startLogout = () => (dispatch) => {
+    localStorage.clear();
+    dispatch(logout());
 };
 
 // Sync Actions
@@ -68,6 +72,13 @@ export const login = (user) => {
     return {
         type: TYPES.AUTH_LOGIN,
         payload: user,
+    };
+};
+
+export const logout = () => {
+    return {
+        type: TYPES.AUTH_LOGOUT,
+        payload: null,
     };
 };
 
