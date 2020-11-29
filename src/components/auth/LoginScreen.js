@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
 import { startLogin, startRegister } from '../../actions/auth';
@@ -8,6 +8,15 @@ import Swal from 'sweetalert2';
 
 export const LoginScreen = () => {
     const dispatch = useDispatch();
+
+    const [errors, setErrors] = useState({
+        Lemail: false,
+        Lpassword: false,
+        Rname: false,
+        Remail: false,
+        Rpassword: false,
+        Rpassword2: false,
+    });
 
     const [loginForm, handleLoginChange] = useForm({
         Lemail: 'juan.pablo@gmail.com',
@@ -40,37 +49,96 @@ export const LoginScreen = () => {
 
     const isValidLoginForm = () => {
         if (!validator.isEmail(Lemail)) {
+            setErrors({ ...errors, Lemail: true });
             Swal.fire('Error', 'Email must be valid', 'error');
             return false;
         }
-        if (/^\s*$/.test(Lpassword)) {
-            Swal.fire('Error', 'Password must be entered', 'error');
+        if (Lpassword.trim().length < 8) {
+            setErrors({ ...errors, Lpassword: true });
+            Swal.fire(
+                'Error',
+                'Password must be at least 8 characters',
+                'error'
+            );
             return false;
         }
+        setErrors({
+            Lemail: false,
+            Lpassword: false,
+            Rname: false,
+            Remail: false,
+            Rpassword: false,
+            Rpassword2: false,
+        });
         return true;
     };
 
     const isValidRegisterForm = () => {
         if (/^\s*$/.test(Rname)) {
+            setErrors({ ...errors, Rname: true });
             Swal.fire('Error', 'Name cannot be empty', 'error');
             return false;
         }
         if (!validator.isEmail(Remail)) {
+            setErrors({ ...errors, Remail: true });
             Swal.fire('Error', 'Email must be valid', 'error');
             return false;
         }
-        if (Rpassword.trim().length <= 5) {
+        if (Rpassword.trim().length < 8 || Rpassword.trim().length > 32) {
+            setErrors({ ...errors, Rpassword: true });
             Swal.fire(
                 'Error',
-                'Password must be at least 6 characters',
+                'Password must be at least 8 characters and less that 32 characters',
+                'error'
+            );
+            return false;
+        }
+        if (!/[0-9]/.test(Rpassword)) {
+            setErrors({ ...errors, Rpassword: true });
+            Swal.fire('Error', 'Password must contain a number', 'error');
+            return false;
+        }
+        if (!/[a-z]/.test(Rpassword)) {
+            setErrors({ ...errors, Rpassword: true });
+            Swal.fire(
+                'Error',
+                'Password must contain a lower case letter',
+                'error'
+            );
+            return false;
+        }
+        if (!/[A-Z]/.test(Rpassword)) {
+            setErrors({ ...errors, Rpassword: true });
+            Swal.fire(
+                'Error',
+                'Password must contain an upper case letter',
+                'error'
+            );
+            return false;
+        }
+        if (!/[*.!@$%^&(){}[\]:;,.?/\\~_+\-=|]/.test(Rpassword)) {
+            setErrors({ ...errors, Rpassword: true });
+            Swal.fire(
+                'Error',
+                'Password must contain a special character',
                 'error'
             );
             return false;
         }
         if (Rpassword !== Rpassword2) {
+            setErrors({ ...errors, Rpassword: true });
+            setErrors({ ...errors, Rpassword2: true });
             Swal.fire('Error', "Passwords don't match", 'error');
             return false;
         }
+        setErrors({
+            Lemail: false,
+            Lpassword: false,
+            Rname: false,
+            Remail: false,
+            Rpassword: false,
+            Rpassword2: false,
+        });
         return true;
     };
 
@@ -83,7 +151,11 @@ export const LoginScreen = () => {
                         <div className="form-group">
                             <input
                                 type="text"
-                                className="form-control"
+                                className={
+                                    errors.Lemail
+                                        ? 'form-control is-invalid'
+                                        : 'form-control'
+                                }
                                 placeholder="Correo"
                                 name="Lemail"
                                 value={Lemail}
@@ -93,7 +165,11 @@ export const LoginScreen = () => {
                         <div className="form-group">
                             <input
                                 type="password"
-                                className="form-control"
+                                className={
+                                    errors.Lpassword
+                                        ? 'form-control is-invalid'
+                                        : 'form-control'
+                                }
                                 placeholder="Contraseña"
                                 name="Lpassword"
                                 value={Lpassword}
@@ -116,7 +192,11 @@ export const LoginScreen = () => {
                         <div className="form-group">
                             <input
                                 type="text"
-                                className="form-control"
+                                className={
+                                    errors.Rname
+                                        ? 'form-control is-invalid'
+                                        : 'form-control'
+                                }
                                 placeholder="Nombre"
                                 name="Rname"
                                 value={Rname}
@@ -126,7 +206,11 @@ export const LoginScreen = () => {
                         <div className="form-group">
                             <input
                                 type="email"
-                                className="form-control"
+                                className={
+                                    errors.Remail
+                                        ? 'form-control is-invalid'
+                                        : 'form-control'
+                                }
                                 placeholder="Correo"
                                 name="Remail"
                                 value={Remail}
@@ -136,7 +220,11 @@ export const LoginScreen = () => {
                         <div className="form-group">
                             <input
                                 type="password"
-                                className="form-control"
+                                className={
+                                    errors.Rpassword
+                                        ? 'form-control is-invalid'
+                                        : 'form-control'
+                                }
                                 placeholder="Contraseña"
                                 name="Rpassword"
                                 value={Rpassword}
@@ -147,7 +235,11 @@ export const LoginScreen = () => {
                         <div className="form-group">
                             <input
                                 type="password"
-                                className="form-control"
+                                className={
+                                    errors.Rpassword2
+                                        ? 'form-control is-invalid'
+                                        : 'form-control'
+                                }
                                 placeholder="Repita la contraseña"
                                 name="Rpassword2"
                                 value={Rpassword2}
