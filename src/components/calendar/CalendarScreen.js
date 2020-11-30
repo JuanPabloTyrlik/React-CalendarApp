@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import 'moment/locale/es';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -10,7 +10,11 @@ import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiModalOpen } from '../../actions/ui';
-import { eventClearActive, eventSetActive } from '../../actions/events';
+import {
+    eventClearActive,
+    eventSetActive,
+    eventStartLoadingEvents,
+} from '../../actions/events';
 import { AddNewFab } from '../ui/AddNewFab';
 import { DeleteFab } from '../ui/DeleteFab';
 
@@ -20,6 +24,7 @@ const localizer = momentLocalizer(moment);
 export const CalendarScreen = () => {
     const dispatch = useDispatch();
     const { events, activeEvent } = useSelector((state) => state.calendar);
+    const { uid } = useSelector((state) => state.auth);
 
     const [lastView, setLastView] = useState(
         localStorage.getItem('lastView') || 'month'
@@ -27,7 +32,7 @@ export const CalendarScreen = () => {
 
     const eventStyleGetter = (event, start, end, isSelected) => {
         const style = {
-            backgroundColor: '#367CF7',
+            backgroundColor: uid === event.user._id ? '#367CF7' : '#465660',
             borderRadius: '0px',
             opacity: 0.8,
             display: 'block',
@@ -55,6 +60,10 @@ export const CalendarScreen = () => {
     const onSelectSlot = () => {
         dispatch(eventClearActive());
     };
+
+    useEffect(() => {
+        dispatch(eventStartLoadingEvents());
+    }, [dispatch]);
 
     return (
         <div className="calendar-screen">
