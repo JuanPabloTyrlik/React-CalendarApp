@@ -30,7 +30,7 @@ export const fetchWithToken = (endpoint, data, method = 'GET') => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(data),
+            body: data ? JSON.stringify(data) : undefined,
         });
     }
 };

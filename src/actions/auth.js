@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import { fetchWithoutToken, fetchWithToken } from '../helpers/fetch';
 import { TYPES } from '../types/types';
+import { eventClearAll } from './events';
 
 // Async Actions
 export const startLogin = (email, password) => async (dispatch) => {
@@ -65,6 +66,7 @@ export const startChecking = () => async (dispatch) => {
 export const startLogout = () => (dispatch) => {
     localStorage.clear();
     dispatch(logout());
+    dispatch(eventClearAll());
 };
 
 // Sync Actions

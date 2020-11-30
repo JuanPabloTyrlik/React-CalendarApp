@@ -81,6 +81,7 @@ body {
     right: 2rem;
     width: 75px;
     height: 75px;
+    z-index: 10;
 }
 
 .fab-danger {
@@ -92,4 +93,5 @@ body {
     left: 2rem;
     width: 75px;
     height: 75px;
+    z-index: 10;
 }

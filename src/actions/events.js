@@ -35,14 +35,35 @@ export const eventStartLoadingEvents = () => async (dispatch) => {
     }
 };
 
-// Sync Actions
-
-export const eventAddNew = (event) => {
-    return {
-        type: TYPES.EVENT_ADD_NEW,
-        payload: event,
-    };
+export const eventStartUpdate = (event) => async (dispatch) => {
+    try {
+        const resp = await fetchWithToken(`events/${event.id}`, event, 'PUT');
+        const body = await resp.json();
+        if (body.ok) {
+            dispatch(eventUpdated(event));
+        } else {
+            Swal.fire('Error', body.message, 'error');
+        }
+    } catch (err) {
+        Swal.fire('Error', err.message, 'error');
+    }
 };
+
+export const eventStartDelete = (id) => async (dispatch) => {
+    try {
+        const resp = await fetchWithToken(`events/${id}`, null, 'DELETE');
+        const body = await resp.json();
+        if (body.ok) {
+            dispatch(eventDeleted());
+        } else {
+            Swal.fire('Error', body.message, 'error');
+        }
+    } catch (err) {
+        Swal.fire('Error', err.message, 'error');
+    }
+};
+
+// Sync Actions
 
 export const eventSetActive = (event) => {
     return {
@@ -58,21 +79,35 @@ export const eventClearActive = () => {
     };
 };
 
-export const eventUpdated = (event) => {
+export const eventClearAll = () => {
+    return {
+        type: TYPES.EVENT_CLEAR_ALL,
+        payload: null,
+    };
+};
+
+const eventAddNew = (event) => {
+    return {
+        type: TYPES.EVENT_ADD_NEW,
+        payload: event,
+    };
+};
+
+const eventUpdated = (event) => {
     return {
         type: TYPES.EVENT_UPDATED,
         payload: event,
     };
 };
 
-export const eventDeleted = () => {
+const eventDeleted = () => {
     return {
         type: TYPES.EVENT_DELETED,
         payload: null,
     };
 };
 
-export const eventLoaded = (events) => {
+const eventLoaded = (events) => {
     return {
         type: TYPES.EVENT_LOADED,
         payload: events,

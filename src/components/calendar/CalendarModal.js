@@ -8,7 +8,7 @@ import { uiModalClose } from '../../actions/ui';
 import {
     eventClearActive,
     eventStartAddNew,
-    eventUpdated,
+    eventStartUpdate,
 } from '../../actions/events';
 
 const customStyles = {
@@ -112,15 +112,8 @@ export const CalendarModal = () => {
                 'error'
             );
         }
-        // TODO: Save to DB
         if (activeEvent) {
-            dispatch(
-                eventUpdated({
-                    id: activeEvent.id,
-                    ...formValues,
-                    user: activeEvent.user,
-                })
-            );
+            dispatch(eventStartUpdate({ ...activeEvent, ...formValues }));
         } else {
             dispatch(eventStartAddNew(formValues));
         }

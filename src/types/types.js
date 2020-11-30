@@ -3,9 +3,9 @@ export const TYPES = {
     UI_CLOSE_MODAL: '[UI] Close Modal',
 
     EVENT_ADD_NEW: '[EVENT] Add New',
-    EVENT_START_ADD_NEW: '[EVENT] Start Add New',
     EVENT_SET_ACTIVE: '[EVENT] Set Active',
     EVENT_CLEAR_ACTIVE: '[EVENT] Clear Active',
+    EVENT_CLEAR_ALL: '[EVENT] Clear All',
     EVENT_UPDATED: '[EVENT] Update Event',
     EVENT_DELETED: '[EVENT] Delete Event',
     EVENT_LOADED: '[EVENT] Load Events',
