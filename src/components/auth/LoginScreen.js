@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { startLogin, startRegister } from '../../actions/auth';
 import { useForm } from '../../hooks/useForm';
 import './login.css';
+import Swal from 'sweetalert2';
 
 export const LoginScreen = () => {
     const dispatch = useDispatch();
@@ -40,8 +41,8 @@ export const LoginScreen = () => {
 
     const handleRegister = (e) => {
         e.preventDefault();
-        isValidRegisterForm();
-        dispatch(startRegister(Rname, Remail, Rpassword));
+        if (isValidRegisterForm())
+            dispatch(startRegister(Rname, Remail, Rpassword));
     };
 
     const isValidLoginForm = () => {
@@ -67,35 +68,30 @@ export const LoginScreen = () => {
     const isValidRegisterForm = () => {
         if (/^\s*$/.test(Rname)) {
             setErrors({ ...errors, Rname: true });
+            Swal.fire('Error', 'Name cannot be empty', 'error');
             return false;
         }
         if (!validator.isEmail(Remail)) {
             setErrors({ ...errors, Remail: true });
+            Swal.fire('Error', 'Email must be valid', 'error');
             return false;
         }
-        if (Rpassword.trim().length < 8 || Rpassword.trim().length > 32) {
+        if (/^\s*$/.test(Rpassword)) {
             setErrors({ ...errors, Rpassword: true });
+            Swal.fire('Error', 'Password cannot be empty', 'error');
             return false;
         }
-        if (!/[0-9]/.test(Rpassword)) {
+        if (
+            !/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[\]:;,.?/\\~_+\-=|]).{8,32}$/.test(
+                Rpassword
+            )
+        ) {
             setErrors({ ...errors, Rpassword: true });
-            return false;
-        }
-        if (!/[a-z]/.test(Rpassword)) {
-            setErrors({ ...errors, Rpassword: true });
-            return false;
-        }
-        if (!/[A-Z]/.test(Rpassword)) {
-            setErrors({ ...errors, Rpassword: true });
-            return false;
-        }
-        if (!/[*.!@$%^&(){}[\]:;,.?/\\~_+\-=|]/.test(Rpassword)) {
-            setErrors({ ...errors, Rpassword: true });
-            return false;
         }
         if (Rpassword !== Rpassword2) {
             setErrors({ ...errors, Rpassword: true });
             setErrors({ ...errors, Rpassword2: true });
+            Swal.fire('Error', "Passwords don't match", 'error');
             return false;
         }
         setErrors({

@@ -3,11 +3,14 @@ const { fetchWithoutToken, fetchWithToken } = require('../fetch');
 describe('Tests on Fetch', () => {
     let token = '';
     test('should call fetch without sending token', async () => {
+        const { email, password } = JSON.parse(
+            process.env.REACT_APP_API_TEST_USER
+        );
         const resp = await fetchWithoutToken(
             'auth/login',
             {
-                email: 'juan.pablo@gmail.com',
-                password: 'Ab1-bccH',
+                email,
+                password,
             },
             'POST'
         );
