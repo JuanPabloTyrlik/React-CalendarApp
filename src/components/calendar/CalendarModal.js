@@ -22,7 +22,7 @@ const customStyles = {
     },
 };
 
-Modal.setAppElement('#root');
+if (process.env.NODE_ENV !== 'test') Modal.setAppElement('#root');
 
 const start = moment().minutes(0).seconds(0).toDate();
 const end = moment(start).add(1, 'hour').toDate();
