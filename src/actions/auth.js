@@ -21,6 +21,12 @@ export const startLogin = (email, password) => async (dispatch) => {
             })
         );
     } else {
+        if (body.errors) {
+            body.message = body.errors.reduce(
+                (a, v) => (a += '' + v.msg + '<br/>'),
+                ''
+            );
+        }
         Swal.fire('Error', body.message, 'error');
     }
 };
@@ -42,6 +48,12 @@ export const startRegister = (name, email, password) => async (dispatch) => {
             })
         );
     } else {
+        if (body.errors) {
+            body.message = body.errors.reduce(
+                (a, v) => (a += '' + v.msg + '<br/>'),
+                ''
+            );
+        }
         Swal.fire('Error', body.message, 'error');
     }
 };
