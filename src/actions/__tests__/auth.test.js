@@ -1,8 +1,9 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import Swal from 'sweetalert2';
+import * as fetchModule from '../../helpers/fetch';
 import { TYPES } from '../../types/types';
-import { startLogin } from '../auth';
+import { startChecking, startLogin, startRegister } from '../auth';
 
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
@@ -54,6 +55,71 @@ describe('Tests on Auth Actions', () => {
             'Error',
             'Invalid email or password',
             'error'
+        );
+    });
+    test('startRegister should create an user', async () => {
+        fetchModule.fetchWithoutToken = jest.fn(() => {
+            return {
+                json: () => ({
+                    ok: true,
+                    token: 'ashdkahsdkjasd',
+                    uid: '123123123123',
+                    name: 'TestUser',
+                }),
+            };
+        });
+        await store.dispatch(
+            startRegister('TestUser', 'test@test.com', '123456')
+        );
+        const actions = store.getActions();
+        expect(actions[0]).toEqual({
+            type: TYPES.AUTH_LOGIN,
+            payload: {
+                uid: '123123123123',
+                name: 'TestUser',
+            },
+        });
+        expect(fetchModule.fetchWithoutToken).toHaveBeenCalledWith(
+            'auth/register',
+            { name: 'TestUser', email: 'test@test.com', password: '123456' },
+            'POST'
+        );
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+            'token',
+            'ashdkahsdkjasd'
+        );
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+            'token-init-date',
+            expect.any(Number)
+        );
+    });
+    test('startChecking works correctly', async () => {
+        fetchModule.fetchWithToken = jest.fn(() => {
+            return {
+                json: () => ({
+                    ok: true,
+                    token: 'ashdkahsdkjasd',
+                    uid: '123123123123',
+                    name: 'TestUser',
+                }),
+            };
+        });
+        await store.dispatch(startChecking());
+        const actions = store.getActions();
+        expect(actions[0]).toEqual({
+            type: TYPES.AUTH_LOGIN,
+            payload: {
+                uid: '123123123123',
+                name: 'TestUser',
+            },
+        });
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+            'token',
+            'ashdkahsdkjasd'
+        );
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+            'token-init-date',
+            expect.any(Number)
         );
     });
 });
